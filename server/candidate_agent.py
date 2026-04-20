@@ -57,7 +57,7 @@ class CandidateAgent:
             self.true_floor_tc = int(self.max_tc * 0.90) 
 
         elif self.tier_name == "deadline_candidate":
-            self.patience_remaining = random.randint(3, 4) # Very short patience
+            self.patience_remaining = random.randint(2, 5) # Very short patience
             
         elif self.tier_name == "competing_offer_candidate":
             self.patience_remaining = 5
@@ -118,7 +118,7 @@ class CandidateAgent:
         if self.is_withdrawn or self.is_accepted:
             return "No effect. Negotiation is already closed."
             
-        self.patience_remaining -= 2
+        self.patience_remaining -= random.randint(1,3)
         if self.patience_remaining <= 0:
             self.is_withdrawn = True
             return "Pressure backfired. Candidate withdrew: 'I don't appreciate being rushed. I'm walking away.'"
