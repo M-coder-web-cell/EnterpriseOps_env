@@ -125,7 +125,7 @@ class CandidateAgent:
             
         if self.tier_name == "deadline_candidate":
             # This type of candidate respects deadlines
-            self.true_floor_tc = int(self.true_floor_tc * 0.95)
+            self.true_floor_tc = int(self.true_floor_tc * random.uniform(0.80, 0.95))
             return "Candidate seems anxious. They might accept a slightly lower offer now."
             
         return "Candidate is annoyed by the pressure. Patience decreased."
