@@ -1,6 +1,28 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Any
 
+#NEGOTIATION-TASK
+@dataclass
+class Offer:
+    """A compensation offer made by the HR agent to the candidate."""
+    base: int
+    equity: int
+    signing: int
+ 
+    @property
+    def total_comp(self) -> int:
+        return self.base + self.equity + self.signing
+ 
+    def perceived_value(self, equity_preference: float) -> float:
+        """Candidate's subjective valuation based on their equity preference.
+        Base and signing are always full value. Equity gets a bonus multiplier
+        based on how much the candidate prefers equity — so a high-equity offer
+        looks better to an equity-hungry candidate than the raw total_comp suggests.
+        equity_preference=0.0 → equity valued at face value (no bonus)
+        equity_preference=1.0 → equity valued at 2x face value"""
+        return self.base + (self.equity * (1 + equity_preference)) + self.signing
+ 
+ 
 @dataclass
 class EnterpriseOpsAction:
     """The command issued by the AI HR Operations Coordinator."""
@@ -65,22 +87,3 @@ class AdversarialScenarioSpec(ScenarioSpec):
     expected_observation_hints: List[str] = field(default_factory=list)
     expected_diagnostic_path: List[str] = field(default_factory=list)
 
-
-#negotiations
-@dataclass
-class Offer:
-    base: int
-    equity: int
-    signing: int
-    
-    # optional metadata
-    turn_number: int = 0        # which step was this offered at
-    note: str = ""              # e.g. "escalated" or "after deadline pressure"
-
-    @property
-    def total_comp(self) -> int:
-        return self.base + self.equity + self.signing
-
-    def perceived_value(self, equity_preference: float) -> float:
-        """Candidate's subjective valuation based on their equity preference."""
-        return (self.base * (1 - equity_preference)) + (self.equity * equity_preference * 1.5) + self.signing
