@@ -64,3 +64,23 @@ class AdversarialScenarioSpec(ScenarioSpec):
     red_herrings: List[str] = field(default_factory=list)
     expected_observation_hints: List[str] = field(default_factory=list)
     expected_diagnostic_path: List[str] = field(default_factory=list)
+
+
+#negotiations
+@dataclass
+class Offer:
+    base: int
+    equity: int
+    signing: int
+    
+    # optional metadata
+    turn_number: int = 0        # which step was this offered at
+    note: str = ""              # e.g. "escalated" or "after deadline pressure"
+
+    @property
+    def total_comp(self) -> int:
+        return self.base + self.equity + self.signing
+
+    def perceived_value(self, equity_preference: float) -> float:
+        """Candidate's subjective valuation based on their equity preference."""
+        return (self.base * (1 - equity_preference)) + (self.equity * equity_preference * 1.5) + self.signing

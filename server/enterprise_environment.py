@@ -15,7 +15,7 @@ from uuid import uuid4
 # Assuming base OpenEnv interfaces
 from openenv.core.env_server.interfaces import Environment
 
-from .models import EnterpriseOpsAction, EnterpriseOpsObservation, EnterpriseOpsState
+from .models import EnterpriseOpsAction, EnterpriseOpsObservation, EnterpriseOpsState, Offer
 from .tool_backends import ToolBackend
 from .candidate_agent import CandidateAgent
 from .chaos_injector import ChaosInjector
@@ -122,7 +122,8 @@ class EnterpriseOpsEnvironment(Environment):
             if cmd_base == "make_offer":
                 try:
                     base, equity, signing = int(cmd_parts[1]), int(cmd_parts[2]), int(cmd_parts[3])
-                    accepted, output = self.candidate.evaluate_offer(base, equity, signing)
+                    offer = Offer(base=base, equity=equity, signing=signing)
+                    accepted, output = self.candidate.evaluate_offer(offer)
                     if accepted:
                         output += " (Use 'close_deal' to finalize and move to Onboarding)"
                         self._state.cumulative_reward += 0.2 # Small immediate reward for acceptance
